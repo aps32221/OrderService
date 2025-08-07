@@ -20,6 +20,7 @@ describe('UserController', () => {
       create_date: new Date(),
       delete_date: new Date(),
       update_date: new Date(),
+      shops: [],
     },
     {
       id: 'test2',
@@ -28,6 +29,7 @@ describe('UserController', () => {
       create_date: new Date(),
       delete_date: new Date(),
       update_date: new Date(),
+      shops: [],
     },
   ];
 

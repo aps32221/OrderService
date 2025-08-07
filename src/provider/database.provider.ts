@@ -10,7 +10,7 @@ export const DatabaseProvider = [
         host: 'localhost',
         port: 5432,
         username: 'postgres',
-        password: 'Admin32221',
+        password: 'admin32221',
         database: 'orderservice',
         entities: [join(__dirname, '..', '**', '*.entity.{ts,js}')],
         synchronize: true,

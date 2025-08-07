@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { CreateUserDto, FindUserByEmailDto } from '../../dto/user.dto';
+import {
+  CreateUserDto,
+  FindUserByEmailDto,
+  FindUserByLoginDto,
+} from '../../dto/user.dto';
 import { Response } from 'express';
 
 @Controller()
@@ -48,5 +52,15 @@ export class UserController {
   ): Promise<void> {
     const result = await this.userService.deleteUser(user);
     res.status(result ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST).send();
+  }
+
+  @Post('/login')
+  async loginUser(
+    @Res() res: Response,
+    @Body() user: FindUserByLoginDto,
+  ): Promise<void> {
+    const result = await this.userService.loginUser(user);
+    res.status(result ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    res.send({ id: result?.id, email: result?.email });
   }
 }

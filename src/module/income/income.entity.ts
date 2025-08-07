@@ -3,22 +3,32 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Shop } from '../shop/shop.entity';
+import { Order } from '../order/order.entity';
 
 @Entity()
-export class User {
+export class Income {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 100, unique: true })
-  email: string;
+  @Column()
+  original_price: number;
 
   @Column()
-  password: string;
+  final_price: number;
+
+  @Column()
+  income: number;
+
+  @ManyToOne(() => Shop, (shop) => shop.incomes)
+  shop: Shop;
+
+  @ManyToOne(() => Order, (order) => order.incomes)
+  order: Order;
 
   @CreateDateColumn()
   create_date: Date;
@@ -28,7 +38,4 @@ export class User {
 
   @UpdateDateColumn()
   update_date: Date;
-
-  @OneToMany(() => Shop, (shop) => shop.user)
-  shops: Shop[];
 }
