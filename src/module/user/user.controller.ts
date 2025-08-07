@@ -60,7 +60,8 @@ export class UserController {
     @Body() user: FindUserByLoginDto,
   ): Promise<void> {
     const result = await this.userService.loginUser(user);
-    res.status(result ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-    res.send({ id: result?.id, email: result?.email });
+    res
+      .status(result ? HttpStatus.OK : HttpStatus.NOT_FOUND)
+      .send({ id: result?.id, email: result?.email });
   }
 }

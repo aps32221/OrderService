@@ -37,6 +37,9 @@ export class UserService {
   }
 
   async loginUser(user: FindUserByLoginDto): Promise<User | null> {
+    if (!user.email || !user.password) {
+      return null;
+    }
     const bcyptPass: string = await bcrypt.hash(
       user.password,
       '$2b$10$zO2E5Tead9YEFow79fodbu',

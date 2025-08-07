@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 describe('UserService', () => {
   let service: UserService;
@@ -9,7 +10,7 @@ describe('UserService', () => {
     {
       id: 'test1',
       email: 'test1@test.com',
-      password: 'test1',
+      password: 'test123',
       create_date: new Date(),
       delete_date: new Date(),
       update_date: new Date(),
@@ -18,7 +19,7 @@ describe('UserService', () => {
     {
       id: 'test2',
       email: 'test2@test.com',
-      password: 'test2',
+      password: 'test123',
       create_date: new Date(),
       delete_date: new Date(),
       update_date: new Date(),
@@ -35,6 +36,9 @@ describe('UserService', () => {
     }),
     softDelete: jest.fn(() => {
       return new Promise((res) => res({ affected: 1 } as UpdateResult));
+    }),
+    findOneBy: jest.fn(() => {
+      return new Promise((res) => res(userArr[0]));
     }),
   };
 
@@ -77,6 +81,38 @@ describe('UserService', () => {
     it('should repository.softDelete be executed', async () => {
       await service.deleteUser(userArr[0]);
       expect(mockUserRepo.softDelete).toHaveBeenCalled();
+    });
+  });
+
+  describe('loginUser', () => {
+    it('should email and password be checked', async () => {
+      const userNoEmail: Partial<User> = {
+        password: 'test1',
+      };
+      const userNoPassword: Partial<User> = {
+        email: 'test1@test.com',
+      };
+      const resultNoEmail = await service.loginUser(userNoEmail as User);
+      const resultNoPassword = await service.loginUser(userNoPassword as User);
+      expect(resultNoEmail).toBeNull();
+      expect(resultNoPassword).toBeNull();
+    });
+    it('should return user', async () => {
+      const user = await service.loginUser(userArr[0]);
+      jest.spyOn(mockUserRepo, 'findOneBy').mockResolvedValue({
+        ...userArr[0],
+        password: bcrypt.hashSync(
+          userArr[0].password,
+          '$2b$10$zO2E5Tead9YEFow79fodbu',
+        ),
+      });
+      expect(mockUserRepo.findOneBy).toHaveBeenCalled();
+      expect(user).toEqual(userArr[0]);
+    });
+    it('should return null if user not found', async () => {
+      jest.spyOn(mockUserRepo, 'findOneBy').mockResolvedValue(null);
+      const user = await service.loginUser(userArr[0]);
+      expect(user).toBeNull();
     });
   });
 });

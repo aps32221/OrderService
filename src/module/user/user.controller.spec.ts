@@ -149,4 +149,41 @@ describe('UserController', () => {
       expect(code).toBe(HttpStatus.BAD_REQUEST);
     });
   });
+  describe('loginUser', () => {
+    let code = HttpStatus.ACCEPTED;
+    const response1: Partial<Response> = {
+      json: jest.fn().mockReturnValue({}),
+      status: jest.fn().mockImplementation((x: number) => {
+        return {
+          send: jest.fn().mockImplementation(() => {
+            code = x;
+          }),
+        };
+      }),
+    };
+    it('should return a user', async () => {
+      jest
+        .spyOn(userService, 'loginUser')
+        .mockImplementation(
+          async () => await new Promise<User>((reso) => reso(userArr[0])),
+        );
+      await userController.loginUser(response1 as Response, {
+        email: userArr[0].email,
+        password: userArr[0].password,
+      });
+      expect(code).toBe(HttpStatus.OK);
+    });
+    it('should return null', async () => {
+      jest
+        .spyOn(userService, 'loginUser')
+        .mockImplementation(
+          async () => await new Promise<User | null>((reso) => reso(null)),
+        );
+      await userController.loginUser(response1 as Response, {
+        email: userArr[0].email,
+        password: userArr[0].password,
+      });
+      expect(code).toBe(HttpStatus.NOT_FOUND);
+    });
+  });
 });
