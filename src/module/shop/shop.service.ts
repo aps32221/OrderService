@@ -12,7 +12,7 @@ export class ShopService {
     return await this.shopRepository.find();
   }
 
-  async getShopByUserId(userId: string): Promise<Shop[] | null> {
+  async getShopByUserId(userId: string): Promise<Shop[]> {
     const shops = await this.shopRepository.find({
       where: { user: { id: userId } },
       relations: {
@@ -20,7 +20,6 @@ export class ShopService {
         tables: true,
       },
     });
-    if (shops.length === 0) return [];
     return shops;
   }
 
