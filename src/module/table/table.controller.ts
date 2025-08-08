@@ -12,7 +12,7 @@ import {
 import { Response } from 'express';
 import { TableService } from './table.service';
 import { Table } from './table.entity';
-import { CreateTable, DeleteTable } from 'src/dto/user.dto';
+import { CreateTable, DeleteTable } from '../../dto/user.dto';
 
 @Controller()
 export class TableController {
